@@ -1,0 +1,16 @@
+{
+  "name": "4-queens",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.bs.js",
+    "rescript": "rescript build -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "rescript": "^9.1.4"
+  }
+}
