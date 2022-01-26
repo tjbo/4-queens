@@ -4,15 +4,38 @@
 var Belt_Array = require("rescript/lib/js/belt_Array.js");
 var Caml_array = require("rescript/lib/js/caml_array.js");
 
+function printQueens(board) {
+  var strings = Belt_Array.map(board, (function (row) {
+          return Belt_Array.map(row, (function (col) {
+                        if (col === 1) {
+                          return "Q";
+                        } else {
+                          return "x";
+                        }
+                      }));
+        }));
+  strings.forEach(function (row) {
+        console.log(row.join(" ") + " ");
+        
+      });
+  
+}
+
 function isDimensionOcccupied(d) {
   return Belt_Array.reduce(d, 0, (function (acc, v) {
                 return acc + v | 0;
               })) > 0;
 }
 
-function isSolution(rows) {
-  console.log(rows);
-  
+function isSolution(a) {
+  var d = Belt_Array.reduce(Belt_Array.map(a, isDimensionOcccupied), 0, (function (acc, v) {
+          if (v) {
+            return acc + 1 | 0;
+          } else {
+            return acc;
+          }
+        }));
+  return d === a.length;
 }
 
 function isColumnOccupied(rows, columnIndex) {
@@ -59,7 +82,7 @@ function placeQueen(_rows, n, firstIndex) {
         ci = ci + 1 | 0;
       } else {
         Caml_array.set(nextRow, ci, 1);
-        ci = 9999;
+        ci = n + 1 | 0;
         if ((rowIndex + 1 | 0) < n) {
           _placeQueen(rowIndex + 1 | 0, 0);
         }
@@ -74,17 +97,23 @@ function placeQueen(_rows, n, firstIndex) {
 
 function make(n) {
   var range = Belt_Array.range(0, n - 1 | 0);
-  return Belt_Array.mapWithIndex(range, (function (i, param) {
+  return Belt_Array.forEachWithIndex(range, (function (i, param) {
                 var rows = Belt_Array.map(range, (function (param) {
                         return Belt_Array.map(range, (function (param) {
                                       return 0;
                                     }));
                       }));
-                return placeQueen(rows, n, i);
+                var r = placeQueen(rows, n, i);
+                if (isSolution(r)) {
+                  console.log("Solution .......");
+                  return printQueens(r);
+                }
+                
               }));
 }
 
 var Board = {
+  printQueens: printQueens,
   isDimensionOcccupied: isDimensionOcccupied,
   isSolution: isSolution,
   isRowOccupied: isDimensionOcccupied,
@@ -95,10 +124,6 @@ var Board = {
 };
 
 var r = make(5);
-
-console.log(r);
-
-console.log((console.log(r), undefined));
 
 exports.Board = Board;
 exports.r = r;

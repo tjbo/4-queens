@@ -1,8 +1,36 @@
 open Belt.Array
 
 module Board = {
+  let printQueens = board => {
+    let strings = board->map(row => {
+      row->map(col => {
+        if col === 1 {
+          "Q"
+        } else {
+          "x"
+        }
+      })
+    })
+
+    strings->Js.Array2.forEach(row => Js.log(Js.Array2.joinWith(row, " ") ++ " "))
+  }
+
   let isDimensionOcccupied = d => {
     d->reduce(0, (acc, v) => acc + v) > 0
+  }
+
+  let isSolution = (a): bool => {
+    let d =
+      a
+      ->map(row => isDimensionOcccupied(row))
+      ->reduce(0, (acc, v) => {
+        switch v {
+        | true => acc + 1
+        | false => acc
+        }
+      })
+
+    d === a->length
   }
 
   let isRowOccupied = isDimensionOcccupied
@@ -76,7 +104,7 @@ module Board = {
           ci := ci.contents + 1
         } else {
           nextRow[ci.contents] = 1
-          ci := 9999
+          ci := n + 1
           if rowIndex + 1 < n {
             _placeQueen(rowIndex + 1, 0)
           }
@@ -90,19 +118,22 @@ module Board = {
 
   let make = n => {
     let range = Belt.Array.range(0, n - 1)
-    range->mapWithIndex((i, _) => {
+
+    range->forEachWithIndex((i, _) => {
       let rows = range->map(_ => {
         range->map(_ => {
           0
         })
       })
 
-      placeQueen(rows, n, i)
+      let r = placeQueen(rows, n, i)
+
+      if isSolution(r) {
+        Js.log("Solution .......")
+        printQueens(r)
+      }
     })
   }
 }
 
 let r = Board.make(5)
-Js.log(r)
-
-// Js.log(Board.isSolution(r))
